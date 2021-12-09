@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap');
+
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.formInput{
+  margin: auto;
+  max-width: 480px;
+}
+
+
+/* timetable generator page*/
+.header{
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  /* padding: 0px 140px; */
+}
+
+.header h1, .rightSide{
+  margin-top: 47px;
+}
+
+.lecture{
+  color: #363C49;
+  padding: 16px 40px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid #ccc;
+  font-style: normal;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 22px;
+  letter-spacing: 0.01em;
+  flex: none;
+  flex-grow: 0;
+  margin: 0px 10px;
+
+}
+
+.generate{
+  color: #fff;
+  padding: 16px 40px;
+  border-radius: 4px;
+  background: #2F80ED;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: 0.01em;
+  flex: none;
+  flex-grow: 0;
+  margin: 0px 10px;
+  
+}
+.courseInfo{
+  display: flex;
+  flex-direction: column;
+  width: 716px;
+  margin: 80px auto 20px;
+  position: relative;
+}
+
+.infoCard{
+  width: 716px;
+  height: 365px;
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+}
+
+.courseStudents{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.ccode, .students{
+  flex-basis: 49.5%;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+.dept{
+  width: 100%;
+  padding: 6px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.days{
+  padding: 6px;
+}
+
+.ccode input, .students input, .dept input{
+  height: 40px;
+  border: none;
+}
+
+.ccode label, .students label, .dept label, .days label{
+  color: #8996A9;
+}
+
+.border{
+  border: 1px solid #AEB8C7;
+  border-radius: 4px;
+}
+
+.days_btn{
+  display: flex;
+  justify-content:flex-start;
+}
+
+.days_btn button{
+  list-style: none;
+  margin-right: 8px;
+  padding: 10px 20px;
+  border: 1px solid #D2D8E0;
+  border-radius: 4px;
+  background: transparent;
+}
+
+.btn-del{
+  display: flex;
+  justify-content: right;
+  align-items: flex-end;
+  color: #eb5757;
+  font-style: normal;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 15px;
+  line-height: 22px;
+  background: transparent;
+  letter-spacing: 0.01em;
+  position: absolute;
+  bottom: 100px;
+  right: 0;
+}
+
+.btn-add{
+  /* display: flex; */
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 22px;
+  border: 1px solid #ccc;
+  padding: 10px 30px;
+  letter-spacing: 0.01em;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
