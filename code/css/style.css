@@ -25,6 +25,10 @@
   margin-top: 47px;
 }
 
+.rightSide{
+  display: flex;
+}
+
 .lecture{
   color: #363C49;
   padding: 16px 40px;
@@ -199,3 +203,14 @@
   bottom: 200px;
   left: 0;
 }
+
+
+/* ________________Generated Timetable________________ */
+.rightSide div{
+  margin-right: 5px;
+}
+
+
+
+
+
