@@ -143,6 +143,30 @@
   bottom: 100px;
   right: 0;
 }
+.far{
+  font-size: 25px;
+  margin-right: 5px;
+  padding-bottom: 20px;
+}
+
+.btn-del-lect{
+  display: flex;
+  justify-content: right;
+  align-items: flex-end;
+  color: #eb5757;
+  font-style: normal;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 15px;
+  line-height: 22px;
+  background: transparent;
+  letter-spacing: 0.01em;
+  position: absolute;
+  bottom: 250px;
+  right: 0;
+}
 
 .btn-add{
   /* display: flex; */
