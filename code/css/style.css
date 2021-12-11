@@ -143,11 +143,23 @@
   bottom: 100px;
   right: 0;
 }
-.far{
-  font-size: 25px;
-  margin-right: 5px;
-  padding-bottom: 20px;
+
+.btn-add{
+  /* display: flex; */
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 22px;
+  border: 1px solid #ccc;
+  padding: 10px 30px;
+  letter-spacing: 0.01em;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
+
+
+/* --------------LECTURE ROOM INFO------------------ */
 
 .btn-del-lect{
   display: flex;
@@ -168,7 +180,13 @@
   right: 0;
 }
 
-.btn-add{
+.far{
+  font-size: 25px;
+  margin-right: 5px;
+  padding-bottom: 20px;
+}
+
+.btn-add-lect{
   /* display: flex; */
   font-style: normal;
   font-weight: bold;
@@ -178,6 +196,6 @@
   padding: 10px 30px;
   letter-spacing: 0.01em;
   position: absolute;
-  bottom: 0;
+  bottom: 200px;
   left: 0;
 }
