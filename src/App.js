@@ -1,24 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useLocation
+} from "react-router-dom";
+
+import CourseEntry from './CourseEntry';
+import LectureRoomEntry from "./LectureRoomEntry";
+import GenerateTable from "./TableGenerate";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+
+      <div class="header container">
+        <h1>Timetable Generator</h1>
+        <div class="rightSide">
+          <ul>
+            <li>
+              <Link to="/">
+                <button class="home-btn btn btn-success">Home</button>
+              </Link>
+            </li>
+            <li>
+              <Link to="lecture-room">
+                <button class="lecture btn btn-light">Lecture Room Info</button>
+              </Link>
+            </li>
+            <li>
+              <Link to="generate-timetable">
+                <button class="generate btn btn-primary">Generate Timetable</button>
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <hr />
+
+      <div className="App">
+        <Switch>
+          <Route exact path="/">
+            <CourseEntry />
+          </Route>
+          <Route path="/lecture-room">
+            <LectureRoomEntry />
+          </Route>
+          <Route path="/generate-timetable">
+            <GenerateTable />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
