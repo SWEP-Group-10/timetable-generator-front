@@ -10,6 +10,7 @@ import {
 import CourseEntry from './CourseEntry';
 import LectureRoomEntry from "./LectureRoomEntry";
 import GenerateTable from "./TableGenerate";
+import Login from "./LoginPage";
 
 function App() {
   return (
@@ -50,6 +51,9 @@ function App() {
           </Route>
           <Route path="/generate-timetable">
             <GenerateTable />
+          </Route>
+          <Route path="/login">
+            <Login />
           </Route>
         </Switch>
       </div>
