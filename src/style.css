@@ -229,3 +229,18 @@
 .rightSide div{
   margin-right: 5px;
 }
+
+/* Corse Entry */
+.dept-entry {
+  margin: 5px;
+  background-color: #AEB8C7;
+}
+
+.dept-entry-cancel {
+  padding-left: 6px;
+}
+
+/* Days button selectors */
+.bg-primary {
+  color: #fff;
+}

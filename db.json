@@ -1,18 +1,36 @@
 {
-    "courses": [
-        {"id": 1, "title": "CSC101"},
-        {"id": 2, "title": "CSC201"},
-        {"id": 3, "title": "CSC301"}
-    ],
-    "departments": [
-        {"id": 1, "name": "Computer Science and Engineering"},
-        {"id": 2, "name": "Mechanical Engineering"}
-    ],
-    "posts": [
-      { "id": 1, "title": "json-server", "author": "typicode" }
-    ],
-    "comments": [
-      { "id": 1, "body": "some comment", "postId": 1 }
-    ],
-    "profile": { "name": "typicode" }
+  "departments": [
+    {
+      "name": "Computer Science with Mathematics 100 level",
+      "code": "CSC100",
+      "created_at": null,
+      "updated_at": null,
+      "id": 1
+    },
+    {
+      "name": "Material Science and Engineering 100 level",
+      "code": "MSE100",
+      "created_at": null,
+      "updated_at": null,
+      "id": 2
+    },
+    {
+      "name": "Electrical and Electronics Engineering 100 level",
+      "code": "EEE100",
+      "created_at": null,
+      "updated_at": null,
+      "id": 3
+    }
+  ],
+  "courses": [
+    {
+      "code": "CSC301",
+      "student_count": 110,
+      "departments": [],
+      "periods": []
+    }
+  ],
+  "profile": {
+    "name": "typicode"
   }
+}
