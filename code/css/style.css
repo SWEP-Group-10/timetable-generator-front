@@ -49,7 +49,6 @@
   color: #fff;
   padding: 16px 40px;
   border-radius: 4px;
-  background: #2F80ED;
   font-style: normal;
   font-weight: bold;
   font-size: 18px;
@@ -58,8 +57,8 @@
   flex: none;
   flex-grow: 0;
   margin: 0px 10px;
-  
 }
+
 .courseInfo{
   display: flex;
   flex-direction: column;
@@ -103,16 +102,17 @@
 .ccode input, .students input, .dept input{
   height: 40px;
   border: none;
+  outline: none;
 }
 
 .ccode label, .students label, .dept label, .days label{
   color: #8996A9;
 }
-
+/* 
 .border{
   border: 1px solid #AEB8C7;
   border-radius: 4px;
-}
+} */
 
 .days_btn{
   display: flex;
