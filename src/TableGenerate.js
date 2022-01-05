@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react/cjs/react.development";
 import {departments, venues as venuesEndpoint, courses as coursesEndpoint} from "./api_endpoints";
+import useCourses from "./hooks/useTableCourses";
 
 function GenerateTable() {
     const [depts, setDepts]= useState([]);
@@ -7,6 +8,8 @@ function GenerateTable() {
     const [courses, setCourses]= useState([]);
     const [tableEntry, setTableEntry]= useState({});
     const [selectedCourse, setSelectedCourse]= useState("");
+    // use the table courses hook
+    const {getTableCourses, setTableCourses} = useCourses({});
 
     useEffect(() => {
         fetch(departments)
@@ -28,7 +31,7 @@ function GenerateTable() {
         .then((response) => response.json())
         .then(resData => {
             setCourses(resData)
-            console.log("courses", resData)
+            // console.log("courses", resData)
         })
         .catch(console.error)
     }, []);
@@ -36,13 +39,26 @@ function GenerateTable() {
     function handleTableUpdate(evt) {
         const selectedCourseCode = evt.target.value;
         setSelectedCourse(selectedCourseCode)
+        setTableCourses({});  // clears the state
         const selectedcourse = courses.find(course => course.code ==selectedCourseCode)
         selectedcourse.periods.forEach(period => {
             const day = period.day;
-            setTableEntry({...tableEntry, [day]: {[period.start]: true}})
+            setTableCourses({...getTableCourses(), [day]: {[period.start]: true}})
         });
-        console.log(tableEntry)      
+        console.log("tabe entry", getTableCourses())      
     }
+
+    // function handleTableUpdate(evt) {
+    //     const selectedCourseCode = evt.target.value;
+    //     setSelectedCourse(selectedCourseCode)
+    //     setTableEntry({});  // clears the state
+    //     const selectedcourse = courses.find(course => course.code ==selectedCourseCode)
+    //     selectedcourse.periods.forEach(period => {
+    //         const day = period.day;
+    //         setTableEntry({...tableEntry, [day]: {[period.start]: true}})
+    //     });
+    //     console.log("tabe entry", tableEntry)      
+    // }
 
     return (
         <div class="header container">
