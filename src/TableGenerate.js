@@ -1,213 +1,823 @@
-import { useEffect, useState } from "react/cjs/react.development";
-import {departments, venues as venuesEndpoint, courses as coursesEndpoint} from "./api_endpoints";
-import useCourses from "./hooks/useTableCourses";
+import { useEffect, useState } from 'react/cjs/react.development'
+import {
+  departments,
+  venues as venuesEndpoint,
+  courses as coursesEndpoint,
+} from './api_endpoints'
+import useCourses from './hooks/useTableCourses'
 
 function GenerateTable() {
-    const [depts, setDepts]= useState([]);
-    const [venues, setVenues]= useState([]);
-    const [courses, setCourses]= useState([]);
-    const [tableEntry, setTableEntry]= useState({});
-    const [selectedCourse, setSelectedCourse]= useState("");
-    // use the table courses hook
-    const {getTableCourses, setTableCourses} = useCourses({});
+  const [depts, setDepts] = useState([])
+  const [venues, setVenues] = useState([])
+  const [courses, setCourses] = useState([])
+  const [tableEntry, setTableEntry] = useState({})
+  const [selectedCourse, setSelectedCourse] = useState('')
+  const [selectedDeptID, setSelectedDeptID] = useState('')
+  const [deptCourses, setDeptCourses] = useState([])
+  const [byCourse, setByCourse] = useState(true)
+  // use the table courses hook
+  const { getTableCourses, setTableCourses } = useCourses({})
 
-    useEffect(() => {
-        fetch(departments)
-        .then((response) => response.json())
-        .then(resData => {
-            setDepts(resData)
-            // console.log("departments", resData)
-        })
-        .catch(console.error)
+  useEffect(() => {
+    fetch(departments)
+      .then((response) => response.json())
+      .then((resData) => {
+        setDepts(resData)
+      })
+      .catch(console.error)
 
-        fetch(venuesEndpoint)
-        .then((response) => response.json())
-        .then(resData => {
-            setVenues(resData)
-        })
-        .catch(console.error)
+    fetch(venuesEndpoint)
+      .then((response) => response.json())
+      .then((resData) => {
+        setVenues(resData)
+      })
+      .catch(console.error)
 
-        fetch(coursesEndpoint)
-        .then((response) => response.json())
-        .then(resData => {
-            setCourses(resData)
-            // console.log("courses", resData)
-        })
-        .catch(console.error)
-    }, []);
+    fetch(coursesEndpoint)
+      .then((response) => response.json())
+      .then((resData) => {
+        setCourses(resData)
+      })
+      .catch(console.error)
+  }, [])
 
-    function handleTableUpdate(evt) {
-        const selectedCourseCode = evt.target.value;
-        setSelectedCourse(selectedCourseCode)
-        setTableCourses({});  // clears the state
-        const selectedcourse = courses.find(course => course.code ==selectedCourseCode)
-        selectedcourse.periods.forEach(period => {
-            const day = period.day;
-            setTableCourses({...getTableCourses(), [day]: {[period.start]: true}})
-        });
-        console.log("tabe entry", getTableCourses())      
-    }
+  function handleCourseUpdate(evt) {
+    const selectedCourseCode = evt.target.value
+    setSelectedCourse(selectedCourseCode)
+    setTableCourses({}) // clears the state
+    const selectedcourse = courses.find(
+      (course) => course.code == selectedCourseCode,
+    )
+    selectedcourse.periods.forEach((period) => {
+      const day = period.day;
+      const venue = period.venue.name;
+      setTableCourses({ ...getTableCourses(), [day]: { [period.start]: true, venue } })
+    })
+    setByCourse(true)
+  }
 
-    // function handleTableUpdate(evt) {
-    //     const selectedCourseCode = evt.target.value;
-    //     setSelectedCourse(selectedCourseCode)
-    //     setTableEntry({});  // clears the state
-    //     const selectedcourse = courses.find(course => course.code ==selectedCourseCode)
-    //     selectedcourse.periods.forEach(period => {
-    //         const day = period.day;
-    //         setTableEntry({...tableEntry, [day]: {[period.start]: true}})
-    //     });
-    //     console.log("tabe entry", tableEntry)      
-    // }
+  function handleDeptUpdate(evt) {
+    const deptID = evt.target.value
+    setSelectedDeptID(deptID)
+    const deptCourses = courses.filter((course) => {
+      return course.departments.find((dept) => dept.id == deptID) ? true : false
+    })
+    // set courses offered by a department
+    setDeptCourses(deptCourses)
+    setByCourse(false)
+  }
 
-    return (
-        <div class="header container">
-            <h1><i class="far fa-arrow-alt-circle-left"></i>Timetable</h1>
-            <div class="rightSide">
-                {/* NO IMPL FOR THIS */}
-                <div>
-                    <label for="Course">Course</label>
-                    <select class="form-select form-select-sm" aria-label=".form-select-lg example" onChange={handleTableUpdate}>
-                    {
-                            courses.map(course => <option key={course.code} value={course.code}>{course.code}</option>)
-                        }
-                        {/* <option selected>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option> */}
-                    </select>
-                </div>
+  function getDeptCourses(courses, day, start) {
+    let courseWithVenue = {}
+    const foundCourse = courses.find((course) => {
+      const coursePeriod = course.periods.find(
+        (period) => period.day == day && period.start == start,
+      )
+      if (coursePeriod) {
+        courseWithVenue['venue'] = coursePeriod?.venue?.name || ''
+        return true
+      }
+      return false
+    })
+    courseWithVenue = { ...foundCourse, ...courseWithVenue }
+    return courseWithVenue
+  }
 
-                <div>
-                    <label for="Course">Departments</label>
-                    <select class="form-select form-select-sm" aria-label=".form-select-lg example">
-                        {
-                            depts.map(dept => <option key={dept.id} value={dept.name}>{dept.name}</option>)
-                        }
-                        {/* <option selected>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option> */}
-                    </select>
-                </div>
+  return (
+    <div class="header container">
+      <h1>
+        <i class="far fa-arrow-alt-circle-left"></i>Timetable
+      </h1>
+      <div>
+        {/* NO IMPL FOR THIS */}
+        <div class="col-lg-9 ml-auto d-flex d-inline-flex justify-content-between">
+          <div class="col-lg-3">
+            <label class="text-muted h6" for="Course">
+              Course
+            </label>
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              onChange={handleCourseUpdate}
+            >
+              {courses.map((course) => (
+                <option key={course.code} value={course.code}>
+                  {course.code}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                <div>
-                    <label for="Course">LectureRoom</label>
-                    <select class="form-select form-select-sm" aria-label=".form-select-lg example">
-                        <option value="All">ALL LT</option>
-                        {
-                            venues.map(venue => <option key={venue.code} value={venue.name}>{venue.name}</option>)
-                        }
-                        {/* <option selected>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option> */}
-                    </select>
-                </div>
+          <div class="col-lg-3">
+            <label class="text-muted h6" for="Course">
+              Departments
+            </label>
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+              onChange={handleDeptUpdate}
+            >
+              {depts.map((dept) => (
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                <button class="lecture btn btn-light">EXPORT</button>
+          <div class="col-lg-3">
+            <label class="text-muted h6" for="Course">
+              LectureRoom
+            </label>
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-lg example"
+            >
+              <option value="All">ALL LT</option>
+              {venues.map((venue) => (
+                <option key={venue.code} value={venue.name}>
+                  {venue.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                {/* TABLE */}
-                <div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>Time</td>
-                                <td>Monday</td>
-                                <td>Tuesday</td>
-                                <td>Wednesday</td>
-                                <td>Thursday</td>
-                                <td>Friday</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>8AM-9AM</td>
-                                <td>{tableEntry?.["Monday"]?.["8"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["8"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["8"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["8"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["8"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>9AM-10AM</td>
-                                <td>{tableEntry?.["Monday"]?.["9"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["9"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["9"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["9"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["9"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>10AM-11AM</td>
-                                <td>{tableEntry?.["Monday"]?.["10"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["10"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["10"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["10"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["10"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>11AM-12PM</td>
-                                <td>{tableEntry?.["Monday"]?.["11"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["11"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["11"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["11"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["11"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>12PM-1PM</td>
-                                <td>{tableEntry?.["Monday"]?.["12"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["12"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["12"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["12"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["12"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>1PM-2PM</td>
-                                <td>{tableEntry?.["Monday"]?.["1"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["1"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["1"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["1"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["1"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>2PM-3PM</td>
-                                <td>{tableEntry?.["Monday"]?.["2"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["2"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["2"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["2"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["2"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>3PM-4PM</td>
-                                <td>{tableEntry?.["Monday"]?.["3"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["3"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["3"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["3"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["3"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>4PM-5PM</td>
-                                <td>{tableEntry?.["Monday"]?.["4"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["4"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["4"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["4"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["4"] ? selectedCourse:""}</td>
-                            </tr>
-                            <tr>
-                                <td>5PM-6PM</td>
-                                <td>{tableEntry?.["Monday"]?.["5"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Tuesday"]?.["5"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Wednesday"]?.["5"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Thursday"]?.["5"] ? selectedCourse:""}</td>
-                                <td>{tableEntry?.["Friday"]?.["5"] ? selectedCourse:""}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+          <button class="col-lg-2 btn btn-light text-primary col-lg-2 timetable-export">
+            EXPORT
+          </button>
         </div>
 
-    );
+        <div class="border-bottom"></div>
+
+        {/* TABLE STARTS HERE */}
+        <div class="container-fluid mt-5 text-center">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th class="text-muted border no-border" scope="col">
+                  Time
+                </th>
+                <th class="text-muted" scope="col">
+                  Monday
+                </th>
+                <th class="text-muted" scope="col">
+                  Tuesday
+                </th>
+                <th class="text-muted" scope="col">
+                  Wednesday
+                </th>
+                <th class="text-muted" scope="col">
+                  Thursday
+                </th>
+                <th class="text-muted" scope="col">
+                  Friday
+                </th>
+              </tr>
+            </thead>
+            {byCourse ? (
+                // FILTER BY COURSE TABLE
+              <tbody>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    8AM-9AM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['8'] ? selectedCourse : ''}
+                    <p>{getTableCourses()?.['Monday']?.['8'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['8']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['8'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['8']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['8'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['8']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['8'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['8'] ? selectedCourse : ''}
+                    <p>{getTableCourses()?.['Friday']?.['8'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    9AM-10AM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['9'] ? selectedCourse : ''}
+                    <p>{getTableCourses()?.['Monday']?.['9'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['9']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['9'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['9']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['9'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['9']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['9'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['9'] ? selectedCourse : ''}
+                    <p>{getTableCourses()?.['Friday']?.['9'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    10AM-11AM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['10']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Monday']?.['10'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['10']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['10'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['10']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['10'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['10']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['10'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['10']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Friday']?.['10'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    11AM-12PM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['11']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Monday']?.['11'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['11']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['11'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['11']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['11'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['11']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['11'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['11']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Friday']?.['11'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    12PM-1PM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['12']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Monday']?.['12'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['12']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['12'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['12']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['12'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['12']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['12'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['12']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Friday']?.['12'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    1PM-2PM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['13']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Monday']?.['13'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['13']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['13'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['13']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['13'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['13']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['13'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['13']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Friday']?.['13'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    2PM-3PM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['14']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Monday']?.['14'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['14']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['14'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['14']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['14'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['14']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['14'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['14']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Friday']?.['14'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    3PM-4PM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['15']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Monday']?.['15'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['15']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['15'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['15']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['15'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['15']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['15'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['15']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Friday']?.['15'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    4PM-5PM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['16']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Monday']?.['16'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['16']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['16'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['16']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['16'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['16']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['16'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['16']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Friday']?.['16'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    5PM-6PM
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Monday']?.['17']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Monday']?.['17'] && getTableCourses()?.["Monday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Tuesday']?.['17']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Tuesday']?.['17'] && getTableCourses()?.["Tuesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Wednesday']?.['17']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Wednesday']?.['17'] && getTableCourses()?.["Wednesday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Thursday']?.['17']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Thursday']?.['17'] && getTableCourses()?.["Thursday"]?.venue}</p>
+                  </td>
+                  <td>
+                    {getTableCourses()?.['Friday']?.['17']
+                      ? selectedCourse
+                      : ''}
+                      <p>{getTableCourses()?.['Friday']?.['17'] && getTableCourses()?.["Friday"]?.venue}</p>
+                  </td>
+                </tr>
+              </tbody>
+            ) : (
+                // FILTER BY DEPARTMENTS TABLE
+              <tbody>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    8AM-9AM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '8')?.code}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Monday', '8')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '8')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '8')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '8')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '8')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '8')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Thursday', '8')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '8')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '8')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    9AM-10AM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '9')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '9')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '9')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '9')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '9')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '9')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '9')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Thursday', '9')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '9')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '9')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    10AM-11AM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '10')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '10')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '10')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '10')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '10')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '10')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '10')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Thursday', '10')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '10')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '10')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    11AM-12PM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '11')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '11')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '11')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '11')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '11')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '11')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '11')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Thursday', '11')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '11')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '11')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    12PM-1PM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '12')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '12')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '12')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '12')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '12')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '12')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '12')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Thursday', '12')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '12')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '12')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    1PM-2PM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '13')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '13')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '13')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '13')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '13')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '13')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '13')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Thursday', '13')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '13')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '13')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    2PM-3PM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '14')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '14')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '14')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '14')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '14')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '14')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '14')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Thursday', '14')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '14')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '14')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    3PM-4PM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '15')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '15')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '15')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '15')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '15')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '15')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '15')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Thursday', '15')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '15')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '15')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    4PM-5PM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '16')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '16')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '16')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '16')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '16')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '16')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '16')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Thursday', '16')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '16')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '16')?.venue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-muted" scope="row">
+                    5PM-6PM
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Monday', '17')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Monday', '17')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Tuesday', '17')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Tuesday', '17')?.venue}</p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Wednesday', '17')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Wednesday', '17')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Thursday', '17')?.code}{' '}
+                    <p>
+                      {getDeptCourses(deptCourses, 'Thursday', '17')?.venue}
+                    </p>
+                  </td>
+                  <td>
+                    {getDeptCourses(deptCourses, 'Friday', '17')?.code}{' '}
+                    <p>{getDeptCourses(deptCourses, 'Friday', '17')?.venue}</p>
+                  </td>
+                </tr>
+              </tbody>
+            )}
+          </table>
+        </div>
+      </div>
+    </div>
+  )
 }
 
-export default GenerateTable;
+export default GenerateTable
