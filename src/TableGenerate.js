@@ -6,6 +6,11 @@ import {
 } from './api_endpoints'
 import useCourses from './hooks/useTableCourses'
 
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+
+import Modal from 'react-modal/lib/components/Modal'
+
 function GenerateTable() {
   const [depts, setDepts] = useState([])
   const [venues, setVenues] = useState([])
@@ -17,6 +22,8 @@ function GenerateTable() {
   const [byCourse, setByCourse] = useState(true)
   // use the table courses hook
   const { getTableCourses, setTableCourses } = useCourses({})
+  // modal state
+  const [modalIsOpen, setModalIsOpen] = useState(false)
 
   useEffect(() => {
     fetch(departments)
@@ -83,6 +90,17 @@ function GenerateTable() {
     return courseWithVenue
   }
 
+  // EXPORT DOCUMENT AS PDF
+  function handleExport() {
+    html2canvas(document.querySelector("#timetable-main"))
+    .then(canvas => {
+      const imageData = canvas.toDataURL("image/png")
+      const pdf = new jsPDF();
+      pdf.addImage(imageData, "PNG", 0, 0)
+      pdf.save("timetable.pdf")
+    })
+  }
+
   return (
     <div class="header container">
       <h1>
@@ -142,7 +160,9 @@ function GenerateTable() {
             </select>
           </div>
 
-          <button class="col-lg-2 btn btn-light text-primary col-lg-2 timetable-export">
+          <button 
+            class="col-lg-2 btn btn-light text-primary col-lg-2 timetable-export"
+            onClick={() => setModalIsOpen(true)}>
             EXPORT
           </button>
         </div>
@@ -151,7 +171,7 @@ function GenerateTable() {
 
         {/* TABLE STARTS HERE */}
         <div class="container-fluid mt-5 text-center">
-          <table class="table table-bordered">
+          <table id="timetable-main" class="table table-bordered">
             <thead>
               <tr>
                 <th class="text-muted border no-border" scope="col">
@@ -814,6 +834,12 @@ function GenerateTable() {
               </tbody>
             )}
           </table>
+          <Modal
+            isOpen={modalIsOpen}>
+            <p>Timetable Will be Exported as PDF</p>
+            <button onClick={() => setModalIsOpen(false)}>cancel</button>
+            <button onClick={handleExport}>save</button>
+          </Modal>
         </div>
       </div>
     </div>
