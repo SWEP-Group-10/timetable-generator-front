@@ -53,15 +53,18 @@
 
 
   <!-- Modal -->
-<div class="modal fade vh-100 justify-content-center align-items-center" id="export" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade vh-" id="export" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Save your timetable</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        ...
+        <div class="col-12 mt-3 p-2 border rounded-3">
+          <label class="text-muted text-left" for="export">Timetable name</label>
+          <input type="text" class="form-control border-0" name="courseCode" id="courseCode" placeholder="CSC300 timetable" required>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
