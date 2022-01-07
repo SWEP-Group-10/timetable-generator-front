@@ -1,9 +1,13 @@
 import { useState } from "react/cjs/react.development";
 import {venues} from "./api_endpoints";
 
+import {useAuth} from "./auth/provider";
+
 function LectureRoomEntry() {
     const [lectureRoomCode, setLectureRoomCode] = useState("");
     const [capacity, setCapacity] = useState(0);
+    // BEARER TOKEN
+    const {bearerToken} = useAuth();
 
     function handleCourseCodeChange(evt) {
         setLectureRoomCode(evt.target.value)
@@ -27,7 +31,8 @@ function LectureRoomEntry() {
         fetch(venues, {
             method: 'POST',
             headers: {
-                'Content-Type': 'apllication/json'
+                'Content-Type': 'apllication/json',
+                Authorization: `Bearer ${bearerToken}`
             },
             body: JSON.stringify({name: lectureRoomCode, size: capacity})
         })

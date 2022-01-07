@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
+import {useAuth} from "./auth/provider";
 
 import { departments as deptEndpoint, courses as coursesEndpoint, departments } from "./api_endpoints";
 
-const deptEndpointLocal = "http://localhost:3003/departments"
+// const deptEndpointLocal = "http://localhost:3003/departments"
 
 function CourseEntry() {
     const [courseCode, setCourseCode] = useState("");
@@ -10,12 +11,14 @@ function CourseEntry() {
     const [depts, setDepts] = useState([]);
     const [deptCode, setDeptCode] = useState([]);
     const [daysSelected, setDaysSelected] = useState([]);
-
-
+    
+    
     const divSelect = useRef();
+    // BEARER TOKEN
+    const {bearerToken} = useAuth();
 
     useEffect(() => {
-        fetch(deptEndpointLocal)
+        fetch(deptEndpoint, {headers: {Authorization: `Bearer ${bearerToken}`}})
             .then(resp => resp.json())
             .then(data => {
                 console.log(data)
@@ -76,18 +79,12 @@ function CourseEntry() {
         evt.preventDefault();
         
         async function postCourse(url = '', data = {}) {
-            // create form-data to match request 'Content-Type' header
-            // const formData  = new FormData();
-            // for(const name in data) {
-            //   formData.append(name, data[name]);
-            // }
-
-            // console.log("formdata", formData.getAll(""))
-            // define the 
+            //
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'apllication/json'
+                    'Content-Type': 'apllication/json',
+                    Authorization: `Bearer ${bearerToken}`
                 },
                 body: JSON.stringify(data) // body data type must match "Content-Type" header
             });

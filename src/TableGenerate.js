@@ -6,6 +6,8 @@ import {
 } from './api_endpoints'
 import useCourses from './hooks/useTableCourses'
 
+import {useAuth} from "./auth/provider";
+
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
@@ -24,23 +26,26 @@ function GenerateTable() {
   const { getTableCourses, setTableCourses } = useCourses({})
   // modal state
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  
+  // BEARER TOKEN
+  const {bearerToken} = useAuth();
 
   useEffect(() => {
-    fetch(departments)
+    fetch(departments, {headers: {Authorization: `Bearer ${bearerToken}`}})
       .then((response) => response.json())
       .then((resData) => {
         setDepts(resData)
       })
       .catch(console.error)
 
-    fetch(venuesEndpoint)
+    fetch(venuesEndpoint, {headers: {Authorization: `Bearer ${bearerToken}`}})
       .then((response) => response.json())
       .then((resData) => {
         setVenues(resData)
       })
       .catch(console.error)
 
-    fetch(coursesEndpoint)
+    fetch(coursesEndpoint, {headers: {Authorization: `Bearer ${bearerToken}`}})
       .then((response) => response.json())
       .then((resData) => {
         setCourses(resData)
@@ -98,7 +103,7 @@ function GenerateTable() {
       const pdf = new jsPDF();
       pdf.addImage(imageData, "PNG", 0, 0)
       pdf.save("timetable.pdf")
-    })
+    }).then(() => setModalIsOpen(false))
   }
 
   return (

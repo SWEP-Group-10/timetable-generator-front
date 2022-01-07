@@ -12,52 +12,60 @@ import LectureRoomEntry from "./LectureRoomEntry";
 import GenerateTable from "./TableGenerate";
 import Login from "./LoginPage";
 
+import ProvideAuth from "./auth/provider";
+import PrivateRoute from "./auth/protected";
+
 function App() {
+  const [showNav, setShowNav] = useState(false);
   return (
+    <ProvideAuth>
     <Router>
-
-      <div class="header container">
-        <h1>Timetable Generator</h1>
-        <div class="rightSide">
-          <ul>
-            <li>
-              <Link to="/">
-                <button class="home-btn btn btn-success">Home</button>
-              </Link>
-            </li>
-            <li>
-              <Link to="lecture-room">
-                <button class="lecture btn btn-light">Lecture Room Info</button>
-              </Link>
-            </li>
-            <li>
-              <Link to="generate-timetable">
-                <button class="generate btn btn-primary">Generate Timetable</button>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <hr />
+      {
+        showNav ? 
+        (
+          <div class="header container">
+            <h1>Timetable Generator</h1>
+            <div class="rightSide">
+              <ul>
+                <li>
+                  <Link to="/home">
+                    <button class="home-btn btn btn-success">Home</button>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/lecture-room">
+                    <button class="lecture btn btn-light">Lecture Room Info</button>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/generate-timetable">
+                    <button class="generate btn btn-primary">Generate Timetable</button>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <hr />
+          </div>
+        ): ""}
 
       <div className="App">
         <Switch>
-          <Route exact path="/">
+          <Route path="/" exact>
+            <Login onSetShowNav={setShowNav}/>
+          </Route>
+          <PrivateRoute exact path="/home">
             <CourseEntry />
-          </Route>
-          <Route path="/lecture-room">
+          </PrivateRoute>
+          <PrivateRoute path="/lecture-room">
             <LectureRoomEntry />
-          </Route>
-          <Route path="/generate-timetable">
+          </PrivateRoute>
+          <PrivateRoute path="/generate-timetable">
             <GenerateTable />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
+          </PrivateRoute>
         </Switch>
       </div>
     </Router>
+    </ProvideAuth>
   );
 }
 
