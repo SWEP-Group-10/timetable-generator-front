@@ -840,10 +840,11 @@ function GenerateTable() {
             )}
           </table>
           <Modal
-            isOpen={modalIsOpen}>
+            isOpen={modalIsOpen}
+            className="Modal">
             <p>Timetable Will be Exported as PDF</p>
-            <button onClick={() => setModalIsOpen(false)}>cancel</button>
-            <button onClick={handleExport}>save</button>
+            <button class="modal-btn btn btn-warning" onClick={() => setModalIsOpen(false)}>CANCEL</button>
+            <button class="modal-btn btn btn-primary" onClick={handleExport}>SAVE</button>
           </Modal>
         </div>
       </div>
