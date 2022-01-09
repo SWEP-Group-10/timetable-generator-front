@@ -60,7 +60,7 @@ function Login({onSetShowNav}) {
   
             <form action="#" onSubmit={handleSubmit}>
               <div class="col-12 mx-auto d-flex flex-column justify-content-start mt-1 border border-1 p-2">
-                <label class="text-muted" for="email">Work Email Address</label>
+                <label class="text-muted" for="email">Username</label>
                 <input type="text" class="form-control border" name="username" id="courseCode" placeholder="eyitopelawal@oauife.edu.ng" onChange={handleUserDataChange} required />
               </div>
   
