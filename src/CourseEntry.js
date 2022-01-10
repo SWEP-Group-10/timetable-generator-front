@@ -22,7 +22,6 @@ function CourseEntry() {
         setCourseCode("");
         setNumStudents(0);
         setDaySelected({});
-        setDepts([]);
         setDeptCode([]);
         setDaysSelected([]);
         // remove all selected depts and clear form
