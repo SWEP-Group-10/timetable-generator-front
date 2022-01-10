@@ -3,6 +3,8 @@ import {useAuth} from "./auth/provider";
 
 import { departments as deptEndpoint, courses as coursesEndpoint, departments } from "./api_endpoints";
 
+import {MutatingDots} from "react-loader-spinner"
+
 // const deptEndpointLocal = "http://localhost:3003/departments"
 
 function CourseEntry() {
@@ -11,8 +13,22 @@ function CourseEntry() {
     const [depts, setDepts] = useState([]);
     const [deptCode, setDeptCode] = useState([]);
     const [daysSelected, setDaysSelected] = useState([]);
+    const [daySelected, setDaySelected] = useState({});
+    const [addcourseLoading, setAddcourseLoading] = useState(false);
     
     
+    // helper function to clear all form state
+    function clearForm() {
+        setCourseCode("");
+        setNumStudents(0);
+        setDaySelected({});
+        setDepts([]);
+        setDeptCode([]);
+        setDaysSelected([]);
+        // remove all selected depts and clear form
+        divSelect.current.innerHTML = '';
+}
+
     const divSelect = useRef();
     // BEARER TOKEN
     const {bearerToken} = useAuth();
@@ -66,18 +82,18 @@ function CourseEntry() {
         // console.log(evt.target)
         const selectedDay = evt.target.innerText;
         if (daysSelected.includes(selectedDay)) {
-            evt.target.removeAttribute('class', 'bg-primary')
+            setDaySelected({...daySelected, [selectedDay]: false});
             const newDaysSelected = daysSelected.filter(d => d != selectedDay)
             setDaysSelected(newDaysSelected)
             return;
         }
+        setDaySelected({...daySelected, [selectedDay]: true});
         setDaysSelected([...daysSelected, selectedDay]);
-        evt.target.setAttribute('class', 'bg-primary');
     }
 
     function handleAddCourseClick(evt) {
         evt.preventDefault();
-        
+        setAddcourseLoading(true);
         async function postCourse(url = '', data = {}) {
             //
             const response = await fetch(url, {
@@ -108,18 +124,20 @@ function CourseEntry() {
         .then(data => {
             console.log("COURSE ADD SUCCESS")
             console.log(data);
+            setAddcourseLoading(false)
+            clearForm();
         })
         .catch(err => {
             console.error("COURSE ADD ERROR");
             console.error(err);
+            setAddcourseLoading(false);
         });
     }
 
-    function handleDeleteCourseclick() {
-        const daysDiv = document.querySelector(".days_btn");
-        const daysBtn = [].slice.call(daysDiv.children);
-        daysBtn.forEach(btn => btn.removeAttribute("class", "dept-entry-cancel"));
+    function handleDeleteClick() {
+        setDaySelected({});
         setDaysSelected([]);
+        clearForm()
     }
 
     return (
@@ -145,7 +163,7 @@ function CourseEntry() {
                                 <input type="text" class="form-control" name="courseCode" id="courseCode" placeholder="e.g 300" value={numStudents} onChange={handleNumStudentsChange} required />
                             </div>
                         </div>
-                        <div class="dept border" ref={divSelect}>
+                        <div class="dept border">
                             <label for="departments">Departments Taking the Course</label>
                             <input type="text" class="form-control " name="courseCode" id="courseCode" placeholder="e.g CSC300" onChange={handleDepartmentSelect} list="departments" required />
 
@@ -156,21 +174,27 @@ function CourseEntry() {
                                     })
                                 }
                             </datalist>
+                            {/* empty div to append all selected deartments */}
+                            <div class="" ref={divSelect}></div>
                         </div>
 
                         <div class="days border">
                             <label for="preferred-days">Preferred Days</label>
                             <div class="days_btn" onClick={handleDaysClick}>
-                                <button>Monday</button>
-                                <button>Tuesday</button>
-                                <button>Wednesday</button>
-                                <button>Thursday</button>
-                                <button>Friday</button>
+                                <button className={daySelected["Monday"] ? "bg-primary": ""}>Monday</button>
+                                <button className={daySelected["Tuesday"] ? "bg-primary": ""}>Tuesday</button>
+                                <button className={daySelected["Wednesday"] ? "bg-primary": ""}>Wednesday</button>
+                                <button className={daySelected["Thursday"] ? "bg-primary": ""}>Thursday</button>
+                                <button className={daySelected["Friday"] ? "bg-primary": ""}>Friday</button>
                             </div>
                         </div>
                         <div>
-                            <button class="btn-del" onClick={handleDeleteCourseclick}>Delete</button>
-                            <button class="btn btn-add" onClick={handleAddCourseClick}>Add Course</button>
+                            <button class="btn-del" onClick={handleDeleteClick}>Delete</button>
+                            {
+                                !addcourseLoading ? (
+                                    <button class="btn btn-add" onClick={handleAddCourseClick}>Add Course</button>
+                                ): (<MutatingDots arialLabel="loading-indicator"  color="blue" secondaryColor="grey"/>)
+                            }
                         </div>
                     </div>
                 </div>

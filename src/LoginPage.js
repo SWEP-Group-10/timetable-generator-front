@@ -9,8 +9,12 @@ import {
 
 import {useAuth} from "./auth/provider";
 
+import {MutatingDots} from "react-loader-spinner"
+
+
 function Login({onSetShowNav}) {
     const [userData, setUserData] = useState({});
+    const [loginLoading, setLoginLoading] = useState(false);
     let history = useHistory();
     let location = useLocation();
     let auth = useAuth();
@@ -24,6 +28,7 @@ function Login({onSetShowNav}) {
 
     function handleSubmit(evt) {
         evt.preventDefault();
+        setLoginLoading(true);
         console.log("submitting", userData)
         let { from } = location.state || { from: { pathname: "/home" } };
         // POSt request to login
@@ -43,10 +48,12 @@ function Login({onSetShowNav}) {
             auth.setBearerToken(bearer_token);
             history.replace(from);
             onSetShowNav(true)
+            setLoginLoading(false);
         })
         .catch((err) => {
             auth.setBearerToken("")
             console.error(err);
+            setLoginLoading(false)
         })
     }
 
@@ -69,8 +76,15 @@ function Login({onSetShowNav}) {
                 <input type="password" class="form-control border" name="password" placeholder="Password" onChange={handleUserDataChange} required />
               </div>
               <label class="text-muted fs-6 ms-3" for="">password should be atleast 6 characters</label>
-              
-              <button class="btn btn-primary col-12 mt-5" type="submit">Sign In</button>
+              <div class="mutating-login">
+                {
+                  !loginLoading? (
+                    <button class="btn btn-primary col-12 mt-5" type="submit">Sign In</button>
+                  ): (
+                      <MutatingDots arialLabel="loading-indicator" width={100}  color="blue" secondaryColor="grey"/>
+                  )
+                }
+              </div>
             </form>
   
           </div>

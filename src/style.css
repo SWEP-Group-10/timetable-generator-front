@@ -248,12 +248,12 @@
 /* Modal styles */
 .Modal {
   position: absolute;
-    top: 100px;
+    top: 30%;
     left: 100px;
     right: 100px;
     bottom: 100px;
     width: 60em;
-    height: 32em;
+    height: 22em;
     background: rgb(211, 218, 226);
     text-align: center;
     padding: 50px 0 10px 10px;
@@ -261,7 +261,23 @@
 }
 
 .modal-btn {
-  margin-top: 20em;
+  margin-top: 1em;
   margin-left: 10px;
   margin-right: 10px;
+}
+
+/* EXPORT BUTTON */
+.timetable-export {
+  border: 1px solid gainsboro;
+}
+
+/* MAIN TABLE */
+#timetable-main {
+  width: 40%;
+  margin-left: 30%;
+}
+
+/* LOGIN  */
+.mutating-login {
+  margin-left: 2em
 }

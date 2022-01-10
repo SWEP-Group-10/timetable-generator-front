@@ -107,13 +107,12 @@ function GenerateTable() {
   }
 
   return (
-    <div class="header container">
-      <h1>
+    <div>
+      {/* <h1>
         <i class="far fa-arrow-alt-circle-left"></i>Timetable
-      </h1>
-      <div>
+      </h1> */}
         {/* NO IMPL FOR THIS */}
-        <div class="col-lg-9 ml-auto d-flex d-inline-flex justify-content-between">
+        <div class="container col-lg-9 ml-auto d-flex d-inline-flex justify-content-between">
           <div class="col-lg-3">
             <label class="text-muted h6" for="Course">
               Course
@@ -842,12 +841,40 @@ function GenerateTable() {
           <Modal
             isOpen={modalIsOpen}
             className="Modal">
-            <p>Timetable Will be Exported as PDF</p>
-            <button class="modal-btn btn btn-warning" onClick={() => setModalIsOpen(false)}>CANCEL</button>
-            <button class="modal-btn btn btn-primary" onClick={handleExport}>SAVE</button>
+            <p>Save your timetable</p>
+            <div class="vh-" id="export" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-body">
+                <div class="col-12 mt-3 p-2 border rounded-3">
+                  <label class="text-muted text-left" for="export">Timetable name</label>
+                  <input type="text" class="form-control border-0" name="courseCode" id="courseCode" placeholder="CSC300 timetable" required />
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button class="modal-btn btn btn-gray" onClick={() => setModalIsOpen(false)}>CANCEL</button>
+              <button class="modal-btn btn btn-primary" onClick={handleExport}>SAVE</button>
+            </div>
+            </div>
           </Modal>
+
+          {/* MODAL TO INTEGRATE */}
+              {/* <div class="modal fade vh-" id="export" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Save your timetable</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setModalIsOpen(false)}>CANCEL</button>
+                      <button class="modal-btn btn btn-primary btn-save" data-bs-dismiss="modal" onClick={handleExport}>SAVE</button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="col-12 mt-3 p-2 border rounded-3">
+                        <label class="text-muted text-left" for="export">Timetable name</label>
+                        <input type="text" class="form-control border-0" name="courseCode" id="courseCode" placeholder="CSC300 timetable" required />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> */}
         </div>
-      </div>
     </div>
   )
 }

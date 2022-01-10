@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import './style.css'
 import './index.css';
+// loading spinner styless
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
