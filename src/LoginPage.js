@@ -81,7 +81,9 @@ function Login({onSetShowNav}) {
                   !loginLoading? (
                     <button class="btn btn-primary col-12 mt-5" type="submit">Sign In</button>
                   ): (
+                    <div class="mutating-dots">
                       <MutatingDots arialLabel="loading-indicator" width={100}  color="blue" secondaryColor="grey"/>
+                    </div>
                   )
                 }
               </div>

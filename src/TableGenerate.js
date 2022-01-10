@@ -22,6 +22,7 @@ function GenerateTable() {
   const [selectedDeptID, setSelectedDeptID] = useState('')
   const [deptCourses, setDeptCourses] = useState([])
   const [byCourse, setByCourse] = useState(true)
+  const [courseFilter, setCourseFilter] = useState(false);
   // use the table courses hook
   const { getTableCourses, setTableCourses } = useCourses({})
   // modal state
@@ -55,6 +56,7 @@ function GenerateTable() {
 
   function handleCourseUpdate(evt) {
     const selectedCourseCode = evt.target.value
+    setCourseFilter(true);
     setSelectedCourse(selectedCourseCode)
     setTableCourses({}) // clears the state
     const selectedcourse = courses.find(
@@ -70,6 +72,7 @@ function GenerateTable() {
 
   function handleDeptUpdate(evt) {
     const deptID = evt.target.value
+    setCourseFilter(false);
     setSelectedDeptID(deptID)
     const deptCourses = courses.filter((course) => {
       return course.departments.find((dept) => dept.id == deptID) ? true : false
@@ -111,8 +114,9 @@ function GenerateTable() {
       {/* <h1>
         <i class="far fa-arrow-alt-circle-left"></i>Timetable
       </h1> */}
-        {/* NO IMPL FOR THIS */}
-        <div class="container col-lg-9 ml-auto d-flex d-inline-flex justify-content-between">
+        <div class="container d-flex justify-content-center">
+
+          {/* Course filter */}
           <div class="col-lg-3">
             <label class="text-muted h6" for="Course">
               Course
@@ -122,6 +126,7 @@ function GenerateTable() {
               aria-label=".form-select-lg example"
               onChange={handleCourseUpdate}
             >
+              <option selected={!courseFilter}>ALL</option>
               {courses.map((course) => (
                 <option key={course.code} value={course.code}>
                   {course.code}
@@ -130,6 +135,7 @@ function GenerateTable() {
             </select>
           </div>
 
+          {/* Department filter */}
           <div class="col-lg-3">
             <label class="text-muted h6" for="Course">
               Departments
@@ -139,6 +145,7 @@ function GenerateTable() {
               aria-label=".form-select-lg example"
               onChange={handleDeptUpdate}
             >
+              <option selected={courseFilter}>ALL</option>
               {depts.map((dept) => (
                 <option key={dept.id} value={dept.id}>
                   {dept.name}
@@ -156,19 +163,21 @@ function GenerateTable() {
               aria-label=".form-select-lg example"
             >
               <option value="All">ALL LT</option>
-              {venues.map((venue) => (
+              {/* {venues.map((venue) => (
                 <option key={venue.code} value={venue.name}>
                   {venue.name}
                 </option>
-              ))}
+              ))} */}
             </select>
           </div>
-
-          <button 
-            class="col-lg-2 btn btn-light text-primary col-lg-2 timetable-export"
-            onClick={() => setModalIsOpen(true)}>
-            EXPORT
-          </button>
+          
+          <div class="col-lg-2 col-md-auto align-self-end">
+            <button 
+              class="btn btn-light text-primary timetable-export"
+              onClick={() => setModalIsOpen(true)}>
+              EXPORT
+            </button>
+          </div>
         </div>
 
         <div class="border-bottom"></div>
@@ -855,25 +864,6 @@ function GenerateTable() {
             </div>
             </div>
           </Modal>
-
-          {/* MODAL TO INTEGRATE */}
-              {/* <div class="modal fade vh-" id="export" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">Save your timetable</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setModalIsOpen(false)}>CANCEL</button>
-                      <button class="modal-btn btn btn-primary btn-save" data-bs-dismiss="modal" onClick={handleExport}>SAVE</button>
-                    </div>
-                    <div class="modal-body">
-                      <div class="col-12 mt-3 p-2 border rounded-3">
-                        <label class="text-muted text-left" for="export">Timetable name</label>
-                        <input type="text" class="form-control border-0" name="courseCode" id="courseCode" placeholder="CSC300 timetable" required />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
         </div>
     </div>
   )

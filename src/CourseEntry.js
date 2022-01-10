@@ -192,7 +192,10 @@ function CourseEntry() {
                             {
                                 !addcourseLoading ? (
                                     <button class="btn btn-add" onClick={handleAddCourseClick}>Add Course</button>
-                                ): (<MutatingDots arialLabel="loading-indicator"  color="blue" secondaryColor="grey"/>)
+                                ): (
+                                <span class="mutating-dots">
+                                    <MutatingDots arialLabel="loading-indicator"  color="blue" secondaryColor="grey"/>
+                                </span>)
                             }
                         </div>
                     </div>

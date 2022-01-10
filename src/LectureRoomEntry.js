@@ -16,6 +16,12 @@ function LectureRoomEntry() {
         return fetch(venues, headers)
     }
 
+// auth headers
+const authHeaders = {
+    'Content-Type': 'apllication/json',
+    Authorization: `Bearer ${bearerToken}`
+}
+
     useEffect(() => {
         fetchLTs(venues, {
             headers: {
@@ -53,8 +59,7 @@ function LectureRoomEntry() {
         fetch(venues, {
             method: 'POST',
             headers: {
-                'Content-Type': 'apllication/json',
-                Authorization: `Bearer ${bearerToken}`
+                ...authHeaders
             },
             body: JSON.stringify({name: lectureRoomCode, size: capacity})
         })
@@ -65,8 +70,7 @@ function LectureRoomEntry() {
             setAddingLT(false)
             return fetchLTs(venues, {
                 headers: {
-                    'Content-Type': 'apllication/json',
-                    Authorization: `Bearer ${bearerToken}`
+                    ...authHeaders
             }})
         })
         .then(res => res.json())
