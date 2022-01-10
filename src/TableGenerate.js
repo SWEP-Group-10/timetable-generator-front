@@ -126,7 +126,7 @@ function GenerateTable() {
               aria-label=".form-select-lg example"
               onChange={handleCourseUpdate}
             >
-              <option selected={!courseFilter}>ALL</option>
+              <option selected={!courseFilter} disabled>ALL</option>
               {courses.map((course) => (
                 <option key={course.code} value={course.code}>
                   {course.code}
@@ -145,7 +145,7 @@ function GenerateTable() {
               aria-label=".form-select-lg example"
               onChange={handleDeptUpdate}
             >
-              <option selected={courseFilter}>ALL</option>
+              <option selected={courseFilter} disabled>ALL</option>
               {depts.map((dept) => (
                 <option key={dept.id} value={dept.id}>
                   {dept.name}
