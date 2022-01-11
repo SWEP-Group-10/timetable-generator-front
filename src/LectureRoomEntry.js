@@ -90,14 +90,7 @@ const authHeaders = {
     }
 
     return (
-        <div>
-            <div class="header container">
-                <h1><i class="far fa-arrow-alt-circle-left"></i>Lecture Room Info</h1>
-                <div class="rightSide">
-                    <button class="generate btn btn-primary">Save Changes</button>
-                </div>
-            </div>
-
+        <div>          
             <div class="container">
                 <div class="courseInfo">
                     <div class="container lt-display">

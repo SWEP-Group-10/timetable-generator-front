@@ -24,28 +24,31 @@ function App() {
         showNav ? 
         (
           <div class="header container">
-            <h1>Timetable Generator</h1>
+            <h2 class="col-4 my-4 justify-self-center mr">Timetable Generator</h2>
             <div class="rightSide">
               <ul>
                 <li>
                   <Link to="/home">
-                    <button class="home-btn btn btn-success">Home</button>
+                    <button class="btn btn-success border border-grey mx-2 my-3 px-4 py-3"><strong>Home</strong></button>
                   </Link>
                 </li>
                 <li>
                   <Link to="/lecture-room">
-                    <button class="lecture btn btn-light">Lecture Room Info</button>
+                    <button class="btn btn-transparent border border-grey mx-2 my-3 px-5 py-3"><strong>Lecture Room Info</strong></button>
+                    
                   </Link>
                 </li>
                 <li>
                   <Link to="/generate-timetable">
-                    <button class="generate btn btn-primary">Generate Timetable</button>
+                    <button class="h2 btn btn-primary border border-grey mx-2 my-3 px-5 py-3"><strong>Generate Timetable</strong></button>
                   </Link>
                 </li>
               </ul>
             </div>
             <hr />
+            <div class="border-bottom"></div>
           </div>
+          
         ): ""}
 
       <div className="App">
