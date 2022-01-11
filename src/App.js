@@ -21,9 +21,9 @@ function App() {
     <ProvideAuth>
     <Router>
       {
-        showNav ? 
+        showNav ?
         (
-          <div class="header container">
+          <div class="header container align-items-center">
             <h2 class="col-4 my-4 justify-self-center mr">Timetable Generator</h2>
             <div class="rightSide">
               <ul>
@@ -35,7 +35,7 @@ function App() {
                 <li>
                   <Link to="/lecture-room">
                     <button class="btn btn-transparent border border-grey mx-2 my-3 px-5 py-3"><strong>Lecture Room Info</strong></button>
-                    
+
                   </Link>
                 </li>
                 <li>
@@ -48,7 +48,7 @@ function App() {
             <hr />
             <div class="border-bottom"></div>
           </div>
-          
+
         ): ""}
 
       <div className="App">

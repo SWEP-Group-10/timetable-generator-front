@@ -85,12 +85,34 @@ const authHeaders = {
         })
     }
 
-    function handleDeleteCourse() {
-
+    function handleDelete(code) {
+        // call the API
+        console.log("lecture room code", code)
+        fetch(`${venues}/${code}`, {
+            method: 'DELETE',
+            headers: {
+                ...authHeaders
+            }
+        })
+            .then(() => {
+                prompt(`Lecture Theatre deleted successfully`)
+                setAddingLT(false)
+                return fetchLTs(venues, {
+                    headers: {
+                        'Content-Type': 'apllication/json',
+                        Authorization: `Bearer ${bearerToken}`
+                    }})
+                    .then(res => res.json())
+                    .then((lts) => {
+                        console.log(lts)
+                        setLectureRooms(lts)
+                    })
+                    .catch(console.error);
+            })
     }
 
     return (
-        <div>          
+        <div>
             <div class="container">
                 <div class="courseInfo">
                     <div class="container lt-display">
@@ -100,7 +122,7 @@ const authHeaders = {
                                     <div class="col border border-top-0 text-uppercase m-2 p-4">{name}</div>
                                     <div class="col border border-top-0 text-uppercase m-2 p-4">{size}</div>
                                     <div class="d-flex flex-column align-items-end">
-                                        <button type="button" class="btn btn-light btn-sm text-danger" onClick={handleDeleteCourse}>delete</button>
+                                        <button type="button" class="btn btn-light btn-sm text-danger" onClick={() => handleDelete(code)}>delete</button>
                                     </div>
                                 </div>
                             ))
